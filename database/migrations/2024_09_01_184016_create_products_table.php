@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\ProductCategory;
+use App\Models\Category;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->foreignIdFor(ProductCategory::class)->constrained()->onDelete('restrict');
+            $table->foreignIdFor(Category::class)->constrained()->onDelete('restrict');
             $table->decimal('price', 10, 2)->default(0);
             $table->enum('discount_type', ['flat', 'percent'])->nullable();
             $table->decimal('discount_value', 10, 2)->nullable();
