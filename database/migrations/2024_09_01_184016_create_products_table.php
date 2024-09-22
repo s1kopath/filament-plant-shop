@@ -16,18 +16,20 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
+            $table->string('sku')->unique();
             $table->foreignIdFor(Category::class)->constrained()->onDelete('restrict');
             $table->decimal('price', 10, 2)->default(0);
-            $table->enum('discount_type', ['flat', 'percent'])->nullable();
+            $table->string('discount_type')->nullable();
             $table->decimal('discount_value', 10, 2)->nullable();
-            $table->json('images')->nullable();
+            $table->string('thumbnail')->nullable();
             $table->integer('stock')->default(0);
             $table->text('short_description')->nullable();
             $table->longText('product_description')->nullable();
-            $table->unsignedTinyInteger('rating_star')->nullable();
-            $table->unsignedInteger('review_count')->nullable();
-            $table->unsignedInteger('sold_count')->nullable();
+            $table->unsignedTinyInteger('rating_star')->default(0);
+            $table->unsignedInteger('review_count')->default(0);
+            $table->unsignedInteger('sold_count')->default(0);
             $table->boolean('is_active')->default(true);
+            $table->json('images')->nullable();
             $table->timestamps();
         });
     }

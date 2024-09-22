@@ -2,16 +2,25 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductResource\Pages;
-use App\Filament\Resources\ProductResource\RelationManagers;
-use App\Models\Product;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Product;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\ProductResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ProductResource\RelationManagers;
 
 class ProductResource extends Resource
 {
@@ -23,52 +32,105 @@ class ProductResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                TextInput::make('title')
                     ->required()
+                    ->maxLength(255)
+                    ->reactive()
+                    ->debounce(500)
+                    ->afterStateUpdated(fn($state, callable $set) => $set('slug', Str::slug($state))),
+
+                TextInput::make('slug')
+                    ->required()
+                    ->unique(Product::class, 'slug', ignoreRecord: true) // Allow the current product's slug
                     ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
+
+                Select::make('category_id')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('product_category_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('price')
+                    ->relationship('category', 'title')
+                    ->preload()
+                    ->searchable(),
+
+                TextInput::make('price')
                     ->required()
                     ->numeric()
                     ->default(0.00)
                     ->prefix('$'),
-                Forms\Components\TextInput::make('discount_type'),
-                Forms\Components\TextInput::make('discount_value')
+
+                Select::make('discount_type')
+                    ->options([
+                        "flat" => 'flat',
+                        "percentage" => 'percentage',
+                    ]),
+                TextInput::make('discount_value')
                     ->numeric(),
-                Forms\Components\TextInput::make('images'),
-                Forms\Components\TextInput::make('stock')
+
+                FileUpload::make('thumbnail')
+                    ->label('Thumbnail')
+                    ->image()
+                    ->required(),
+
+                FileUpload::make('images')
+                    ->label('Product Gallery')
+                    ->image()
+                    ->multiple(),
+
+                TextInput::make('stock')
                     ->required()
                     ->numeric()
                     ->default(0),
-                Forms\Components\Textarea::make('short_description')
+
+                TextInput::make('sku')
+                    ->required()
+                    ->unique(Product::class, 'sku', ignoreRecord: true) // Ignore unique constraint for the current record
+                    ->maxLength(255),
+
+                Textarea::make('short_description')
+                    ->required()
                     ->columnSpanFull(),
-                Forms\Components\Textarea::make('product_description')
+
+                RichEditor::make('product_description')
+                    ->label('Product Description')
+                    ->required()
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('rating_star')
-                    ->numeric(),
-                Forms\Components\TextInput::make('review_count')
-                    ->numeric(),
-                Forms\Components\TextInput::make('sold_count')
-                    ->numeric(),
-                Forms\Components\Toggle::make('is_active')
+
+                Select::make('rating_star')
+                    ->label('Rating')
+                    ->options([
+                        1 => '1 Star',
+                        2 => '2 Stars',
+                        3 => '3 Stars',
+                        4 => '4 Stars',
+                        5 => '5 Stars',
+                    ])
+                    ->default(0)
+                    ->required(),
+
+                TextInput::make('review_count')
+                    ->numeric()
+                    ->default(0),
+
+                TextInput::make('sold_count')
+                    ->numeric()
+                    ->default(0),
+
+                Toggle::make('is_active')
                     ->required(),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('thumbnail')
+                    ->rounded(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
+                Tables\Columns\TextColumn::make('sku')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('product_category_id')
+                Tables\Columns\TextColumn::make('category.title')
+                    ->label('Category')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('price')
@@ -77,7 +139,12 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('discount_type'),
                 Tables\Columns\TextColumn::make('discount_value')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(function ($state, $record) {
+                        return $record->discount_type === 'flat'
+                            ? '$' . number_format($state, 2) // Format as currency
+                            : $state . '%'; // Format as percentage
+                    }),
                 Tables\Columns\TextColumn::make('stock')
                     ->numeric()
                     ->sortable(),
@@ -107,6 +174,7 @@ class ProductResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -74,7 +74,7 @@ class CategoryResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('parent.title')
-                    ->label('parent Category')
+                    ->label('Parent Category')
                     ->sortable()
                     ->searchable(),
 
