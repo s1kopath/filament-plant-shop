@@ -23,6 +23,7 @@ use Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin;
 use App\Filament\Resources\CategoryResource\Widgets\CategoryStatsOverview;
 use App\Filament\Resources\ProductResource\Widgets\ProductStatsOverview;
 use App\Filament\Widgets\CurrentDateTimeWidget;
+use App\Http\Middleware\EnsureIsAdmin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -70,6 +71,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                EnsureIsAdmin::class,
             ])
             ->plugins([
                 FilamentEditProfilePlugin::make()
@@ -84,7 +86,7 @@ class AdminPanelProvider extends PanelProvider
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label(fn() => auth()->user()->name)
-                    ->url(fn (): string => EditProfilePage::getUrl())
+                    ->url(fn(): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle'),
             ]);
     }
