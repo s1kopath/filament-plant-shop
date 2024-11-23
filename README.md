@@ -1,14 +1,5 @@
 
-<p align="center">
-    <a href="https://filamentphp.com" target="_blank">
-        <img src="https://private-user-images.githubusercontent.com/41773797/257018536-8d5a0b12-4643-4b5c-964a-56f0db91b90a.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MjUyMTg2MTYsIm5iZiI6MTcyNTIxODMxNiwicGF0aCI6Ii80MTc3Mzc5Ny8yNTcwMTg1MzYtOGQ1YTBiMTItNDY0My00YjVjLTk2NGEtNTZmMGRiOTFiOTBhLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDA5MDElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwOTAxVDE5MTgzNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPThmNzE0ZGQyNmJkYzUzMDdkYTYzODg3MzdmNTA4NzU0ODYwYjVhOTIxNjAyNjc2NDhkNjY0NGJkYTI3N2ZlZTcmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.A6MHwukdOyzpCf2o4xh_M_M8bZFp_7V8Pw8drBu72Gg" width="100%" alt="Logo">
-    </a>
-</p>
-<p align="center">
-    <a href="https://splade.dev" target="_blank">
-        <img src="https://raw.githubusercontent.com/protonemedia/laravel-splade/main/logo.svg" width="100%" alt="Logo">
-    </a>
-</p>
+
 
 <h1>Filament Plant Shop</h1>
 
